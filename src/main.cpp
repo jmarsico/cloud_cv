@@ -1,4 +1,4 @@
-#include "ofMain.h"
+//#include "ofMain.h"
 #include "testApp.h"
 #include "ofAppNoWindow.h"
 
