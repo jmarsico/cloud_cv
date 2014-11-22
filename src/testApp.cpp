@@ -1,32 +1,4 @@
-/*
- <streams>
- 
- <stream url="http://148.61.142.228/axis-cgi/mjpg/video.cgi?resolution=320x240"/>
- **<stream url="http://82.79.176.85:8081/axis-cgi/mjpg/video.cgi?resolution=320x240"/>
- <stream url="http://81.8.151.136:88/axis-cgi/mjpg/video.cgi?resolution=320x240"/>
- <stream url="http://216.8.159.21/axis-cgi/mjpg/video.cgi?resolution=320x240"/>
- **<stream url="http://kassertheatercam.montclair.edu/axis-cgi/mjpg/video.cgi?resolution=320x240"/>
- <stream url="http://213.77.33.2:8080/axis-cgi/mjpg/video.cgi?resolution=320x240"/>
- <stream url="http://81.20.148.158/anony/mjpg.cgi"/>
- <stream url="http://173.167.157.229/anony/mjpg.cgi"/>
- <stream url="http://67.181.87.150/anony/mjpg.cgi"/>
- <stream url="http://72.227.87.110/anony/mjpg.cgi"/>
- <stream url="http://69.205.126.54/anony/mjpg.cgi"/>
- <stream url="http://173.196.179.29/anony/mjpg.cgi"/>
- <stream url="http://208.105.17.62/anony/mjpg.cgi"/>
- <stream url="http://67.208.104.218/anony/mjpg.cgi"/>
- <stream url="http://212.42.63.190/anony/mjpg.cgi"/>
- <stream url="http://94.246.211.222/anony/mjpg.cgi"/>
- <stream url="http://213.251.201.196/anony/mjpg.cgi"/>
- <stream url="http://208.100.33.174/anony/mjpg.cgi"/>
- <stream url="http://85.186.35.67/anony/mjpg.cgi"/>
- <stream url="http://98.189.188.232/anony/mjpg.cgi"/>
- <stream url="http://209.119.5.4/anony/mjpg.cgi"/>
- <stream url="http://24.155.150.53/anony/mjpg.cgi"/>
- <stream url="http://98.235.174.112/anony/mjpg.cgi"/>
- <stream url="http://88.170.122.125/anony/mjpg.cgi"/>
- -->
- </streams>*/
+
 
 #include "testApp.h"
 
@@ -98,14 +70,85 @@ void testApp::setup() {
     current_msg_string = 0;
 
     ofLog() << "ending setup";
-     
+    
+    erodeNum = 5;
+    dilateNum = 5;
+    threshVal = 60;
+    
 }
 
 
 
 //------------------------------------------------------------------------------
 void testApp::update() {
-	// update the cameras
+	//check for new OSC messages
+    // hide old messages
+	for(int i = 0; i < NUM_MSG_STRINGS; i++){
+		if(timers[i] < ofGetElapsedTimef()){
+			msg_strings[i] = "";
+		}
+	}
+    
+	// check for waiting messages
+	while(receiver.hasWaitingMessages()){
+		// get the next message
+		ofxOscMessage m;
+		receiver.getNextMessage(&m);
+        if(m.getAddress() == "/1/threshold")
+        {
+            ofLog() << "threshold: " << m.getArgAsFloat(0);
+            threshVal = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
+        }
+		else if(m.getAddress() == "/1/erode")
+        {
+            ofLog() << "erode: " << m.getArgAsFloat(0);
+            erodeNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
+        }
+        else if(m.getAddress() == "/1/dilate")
+        {
+            ofLog() << "dilate: " << m.getArgAsFloat(0);
+            dilateNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
+        }
+		
+        else
+        {
+			// unrecognized message: display on the bottom of the screen
+			string msg_string;
+			msg_string = m.getAddress();
+			msg_string += ": ";
+			for(int i = 0; i < m.getNumArgs(); i++){
+				// get the argument type
+				msg_string += m.getArgTypeName(i);
+				msg_string += ":";
+				// display the argument - make sure we get the right type
+				if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+					msg_string += ofToString(m.getArgAsInt32(i));
+				}
+				else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+					msg_string += ofToString(m.getArgAsFloat(i));
+				}
+				else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+					msg_string += m.getArgAsString(i);
+				}
+				else{
+					msg_string += "unknown";
+				}
+			}
+			// add to the list of strings to display
+			msg_strings[current_msg_string] = msg_string;
+			timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
+			current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
+			// clear the next line
+			msg_strings[current_msg_string] = "";
+		}
+        
+	}
+
+    
+    
+    
+    
+    // update the cameras
     grabber->update();
     
     contourFinder.setMinAreaRadius(10);
@@ -114,8 +157,7 @@ void testApp::update() {
     background.setThresholdValue(60);
     
     
-    int erodeNum = 5;
-    int dilateNum = 5;
+
 
     
     
