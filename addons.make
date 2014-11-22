@@ -1,0 +1,12 @@
+ofxNetwork
+ofxOpenCv
+ofxOsc
+ofxXmlSettings
+ofxCv
+ofxHTTP
+ofxIO
+ofxJSON
+ofxMediaType
+ofxSSLManager
+ofxTaskQueue
+ofxIpVideoGrabber
