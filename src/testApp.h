@@ -50,7 +50,6 @@ public:
     int cellSize;
     
     ofx::HTTP::BasicIPVideoServer::SharedPtr server;
-    ofx::HTTP::BasicIPVideoServer::SharedPtr server1;
     
     ofxOscReceiver receiver;
 

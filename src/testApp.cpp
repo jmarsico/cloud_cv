@@ -61,12 +61,9 @@ void testApp::setup() {
     // Many other settings are available.
     settings.setPort(7890);
     server = ofx::HTTP::BasicIPVideoServer::makeShared(settings);
-    server1 = ofx::HTTP::BasicIPVideoServer::makeShared(settings);
     
     // Start the server.
     server->start();
-    server1->start();
-    
 
     //osc stuff
     receiver.setup(PORT);
@@ -77,7 +74,6 @@ void testApp::setup() {
     erodeNum = 5;
     dilateNum = 5;
     threshVal = 60;
-    learnTime = 100;
     
 }
 
@@ -112,12 +108,6 @@ void testApp::update() {
         {
             ofLog() << "dilate: " << m.getArgAsFloat(0);
             dilateNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
-        }
-        else if(m.getAddress() == "/1/learnTime")
-        {
-            ofLog() << "learntime: " << m.getArgAsFloat(0);
-            learnTime = ofMap(m.getArgAsFloat(0), 0, 1, 0, 500);
-            
         }
 		
         else
@@ -163,8 +153,8 @@ void testApp::update() {
     
     contourFinder.setMinAreaRadius(10);
     contourFinder.setMaxAreaRadius(100);
-    background.setLearningTime(learnTime);
-    background.setThresholdValue(threshVal);
+    background.setLearningTime(70);
+    background.setThresholdValue(60);
     
     
 
@@ -205,7 +195,6 @@ void testApp::draw() {
    
         // This can be any kind of pixels.
         server->send(thresholded.getPixelsRef());
-    
     
 
     
