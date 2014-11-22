@@ -50,6 +50,7 @@ public:
     int cellSize;
     
     ofx::HTTP::BasicIPVideoServer::SharedPtr server;
+    ofx::HTTP::BasicIPVideoServer::SharedPtr server1;
     
     ofxOscReceiver receiver;
 
@@ -57,7 +58,7 @@ public:
     string msg_strings[NUM_MSG_STRINGS];
     float timers[NUM_MSG_STRINGS];
     
-    int threshVal, erodeNum, dilateNum;
+    int threshVal, erodeNum, dilateNum, learnTime;
 
     
 };
