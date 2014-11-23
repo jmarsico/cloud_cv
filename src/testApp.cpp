@@ -99,17 +99,17 @@ void testApp::update() {
         if(m.getAddress() == "/1/threshold")
         {
             ofLog() << "threshold: " << m.getArgAsFloat(0);
-            threshVal = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
+            threshVal = ofMap(m.getArgAsFloat(0), 0, 1, 0, 100);
         }
 		else if(m.getAddress() == "/1/erode")
         {
             ofLog() << "erode: " << m.getArgAsFloat(0);
-            erodeNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
+            erodeNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 10);
         }
         else if(m.getAddress() == "/1/dilate")
         {
             ofLog() << "dilate: " << m.getArgAsFloat(0);
-            dilateNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 255);
+            dilateNum = ofMap(m.getArgAsFloat(0), 0, 1, 0, 10);
         }
         else if(m.getAddress() == "/1/learnTime")
         {
