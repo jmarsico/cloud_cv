@@ -75,6 +75,7 @@ void testApp::setup() {
     dilateNum = 5;
     threshVal = 60;
     learnTime = 100;
+    bShowMask = true;
     
 }
 
@@ -114,6 +115,11 @@ void testApp::update() {
         {
             ofLog() << "learnTime: " << m.getArgAsFloat(0);
             learnTime = ofMap(m.getArgAsFloat(0), 0, 1, 1, 1000);
+        }
+        else if(m.getAddress() == "/1/showVid")
+        {
+            ofLog() << "showVid: " << m.getArgAsFloat(0);
+            bShowMask = !m.getArgAsFloat(0);
         }
     
 		
@@ -200,8 +206,16 @@ void testApp::draw() {
     
     // If the frame is new, then send it to the server to be broadcast.
    
-        // This can be any kind of pixels.
+    // This can be any kind of pixels.
+    if(bShowMask)
+    {
         server->send(thresholded.getPixelsRef());
+    }
+    else
+    {
+        server->send(grabFrame.getPixelsRef());
+    }
+    
     
 
     
@@ -211,10 +225,7 @@ void testApp::draw() {
 
 //------------------------------------------------------------------------------
 void testApp::keyPressed(int key) {
-	if(key == ' ')
-    {
-        bShowVideos = !bShowVideos;
-    }
+	
 }
 
 

@@ -58,6 +58,7 @@ public:
     float timers[NUM_MSG_STRINGS];
     
     int threshVal, erodeNum, dilateNum, learnTime;
+    bool bShowMask;
 
     
 };
